@@ -34,9 +34,10 @@ class RenderXML
 	public $content=null;		//If content and children both empty, tag is <selfcontained />
 	public $children=Array();
 
-	public $prefix=null;
-	public $infix=null;
-	public $postfix=null;
+	public $prefix='';
+	public $infix='';
+	public $postfix='';
+	
 	public $selfContained=false;
 
 	function RenderXML($t='div', $pageID='', $options=array())
@@ -176,16 +177,16 @@ class RenderXML
 	public function render()
 	{
 		$OutputStream='';
-		$FrontendMarkup=$this->content;
-		$this->content='';
 		$this->buildContent();
  
-		$OutputStream = '<' . $this->tag .
+		$OutputStream = $this->prefix . 
+			'<' . $this->tag .
 			( $this->pageID != ''		?	' id="'.$this->pageID.'" '	: '')	.
 			( isset($this->attributes)	?	$this->buildAttributes()	: '')	.
 			( isset($this->classes)		?	$this->buildClasses()		: '')	.
 			($this->selfContained 		?	'/>'.PHP_EOL				: '>'	.
-			$FrontendMarkup . $this->content . '</' . $this->tag . '>' . PHP_EOL);
+			$FrontendMarkup . $this->content . $this->infix. '</' . $this->tag . '>' . PHP_EOL) .
+			$this->postfix;
 
 		return $OutputStream;
 	}
