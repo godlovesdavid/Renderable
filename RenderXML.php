@@ -34,8 +34,9 @@ class RenderXML
 	public $content=null;		//If content and children both empty, tag is <selfcontained />
 	public $children=Array();
 
-	public $preFilter=null;
-	public $postFilter=null;
+	public $prefix=null;
+	public $infix=null;
+	public $postfix=null;
 	public $selfContained=false;
 
 	function RenderXML($t='div', $pageID='', $options=array())
@@ -79,9 +80,6 @@ class RenderXML
 		{
 			return ' class="'.get_class($this) .' '. get_class($this) .'_'.$this->id . '" ';
 		}
-//		if($this->classes == ' class=" " ' || $this->classes == ' class="" ') $this->classes = '';
-//		 if($this->attributes === 0){ $this->attributes = '';	 }
-
 	}
 	public function buildContent()
 	{
@@ -192,5 +190,6 @@ class RenderXML
 		return $OutputStream;
 	}
 }
+
 
 ?>
