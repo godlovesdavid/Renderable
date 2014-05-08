@@ -31,7 +31,7 @@ class RenderXML
 	public $tag='div';
 	public $classes=Array();
 	public $attributes=Array();
-	public $content=null;		//If content and children both empty, tag is <selfcontained />
+	public $content=null;
 	public $children=Array();
 
 	public $prefix='';
