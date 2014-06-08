@@ -1,0 +1,18 @@
+
+
+[Entry id=0x0000 when=1402217735]
+Title: Began changelog
+Entry: 0x0000
+Date: 06 / 08 / 2014
+Info: 
+Decided to add a changelog to the main branches of each Approach class. 
+
+Renderable's C++ class has been upgraded substantially. 
+Now supports greater flexibilty and compatibilty with higher-level languages.
+
+mrogers refactored the XML renderable to support a newly added abstract base class, RenderNode
+Clarified streaming semantics. 
+Cleaned up class some and placed more comments/documentation.
+
+[/Entry]
+
