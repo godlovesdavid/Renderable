@@ -25,7 +25,7 @@ require_once('Render.php');
 
 $html = new renderable('html');
 $html->tag='html';
-$APPROACH_DOM_ROOT = 'html';    //Create better mechanism.
+$APPROACH_DOM_ROOT = 'html';	//Create better mechanism.
 
 
 /*
@@ -46,128 +46,144 @@ $Collection = RenderSearch($anyRenderable,'.Buttons');
 Or Directly
 
 
-$SingleTag=function GetRenderable($SearchRoot, 1908);                       //System side render ID $renderable->id;
-$SingleTag=function GetRenderableByPageID($root,'MainContent');             //Client side page ID
+$SingleTag=function GetRenderable($SearchRoot, 1908);					   //System side render ID $renderable->id;
+$SingleTag=function GetRenderableByPageID($root,'MainContent');			 //Client side page ID
 
 $MultiElements=function GetRenderablesByClass($root, 'Buttons');
 $MultiElements=function GetRenderablesByTag($root, 'div');
 
 */
 
-
+/**
+ *
+ */
 function filter( $tag, $content, $styles, $properties)
 {
-    $output="<" . $tag;
-    foreach($this->$properties as $property => $value)
-    {
-        $output .= " $property=\"$value\"";
-    }
-    $output .= " class=\"";
-    foreach($this->$styles as $class)
-    {
-        $output .= $class. " ";
-    }
-    $output .= "\" id=\"$tag\"" . $this->$id . '">';
-    $output .=$content . "</$tag>";
+	$output="<" . $tag;
+	foreach($this->$properties as $property => $value)
+	{
+		$output .= " $property=\"$value\"";
+	}
+	$output .= " class=\"";
+	foreach($this->$styles as $class)
+	{
+		$output .= $class. " ";
+	}
+	$output .= "\" id=\"$tag\"" . $this->$id . '">';
+	$output .=$content . "</$tag>";
 }
 
+//function _($root, $search){	return RenderSearch($root, $search); }
 
-
-
-
-//function _($root, $search){    return RenderSearch($root, $search); }
+/**
+ *
+ */
 function RenderSearch($root, $search)
 {
-    $scope = $search[0];
-    $search = substr($search, 1);
-    $renderObject;
-    switch($scope)
-    {
-        case '$': $renderObject=GetRenderable($root, $search); break;
-        case '#': $renderObject=GetRenderableByPageID($root, $search); break;
-        case '.': $renderObject=GetRenderablesByClass($root, $search); break;
-        default:  $renderObject=GetRenderableByTag($root, $search); break;
-    }
+	$scope = $search[0];
+	$search = substr($search, 1);
+	$renderObject;
+	switch($scope)
+	{
+		case '$': $renderObject=GetRenderable($root, $search); break;
+		case '#': $renderObject=GetRenderableByPageID($root, $search); break;
+		case '.': $renderObject=GetRenderablesByClass($root, $search); break;
+		default:  $renderObject=GetRenderableByTag($root, $search); break;
+	}
 
-    return $renderObject;
+	return $renderObject;
 }
 
+/**
+ *
+ */
 function GetRenderable($SearchRoot, $SearchID)
 {
-    if($SearchRoot->id == $SearchID) return $SearchRoot;
+	if($SearchRoot->id == $SearchID) return $SearchRoot;
 
-    foreach($SearchRoot->children as $renderObject)
-    {
-            $result = GetRenderable($renderObject,$SearchID);
-            if($result instanceof renderable)
-            {
-                if($result->id == $SearchID) return $result;
-            }
-    }
+	foreach($SearchRoot->children as $renderObject)
+	{
+			$result = GetRenderable($renderObject,$SearchID);
+			if($result instanceof renderable)
+			{
+				if($result->id == $SearchID) return $result;
+			}
+	}
 }
 
 
-
+/**
+ *
+ */
 function GetRenderablesByTag($root, $tag)
 {
-    $Store=Array();
+	$Store=Array();
 
-    foreach($root->children as $child)   //Get Head
-    {
-        if($child->tag == $tag)
-        {
-            $Store[]=$child;
-        }
-        foreach($child->$children as $children)
-        {
-            $Store = array_merge($Store, GetRenderablesByTag($children, $tag));
-        }
-    }
-    return $Store;
+	foreach($root->children as $child)   //Get Head
+	{
+		if($child->tag == $tag)
+		{
+			$Store[]=$child;
+		}
+		foreach($child->$children as $children)
+		{
+			$Store = array_merge($Store, GetRenderablesByTag($children, $tag));
+		}
+	}
+	return $Store;
 }
 
+/**
+ *
+ */
 function GetRenderablesByClass($root, $class)
 {
-    $Store = array();
+	$Store = array();
 
-    foreach($root->children as $child)   //Get Head
-    {
-        $t=$child->classes;
-        $child->buildClasses();
+	foreach($root->children as $child)   //Get Head
+	{
+		$t=$child->classes;
+		$child->buildClasses();
 
-        if(strpos($child->classes,$class))
-        {
-            $Store[]=$child;
-        }
-        foreach($child->children as $children)
-        {
-            $Store = array_merge($Store, GetRenderablesByClass($children, $class));
-        }
-        $child->classes=$t;
-    }
-    return $Store;
+		if(strpos($child->classes,$class))
+		{
+			$Store[]=$child;
+		}
+		foreach($child->children as $children)
+		{
+			$Store = array_merge($Store, GetRenderablesByClass($children, $class));
+		}
+		$child->classes=$t;
+	}
+	return $Store;
 }
 
+/**
+ *
+ */
 function GetRenderableByPageID($root,$PageID)
 {
-    $Store = new renderable('div');
-    $Store->pageID = 'DEFAULT_ID___ELEMENT_NOT_FOUND';
-    foreach($root->children as $child)   //Get Head
-    {
-        if($child->pageID == $PageID)
-        {
-            $Store = $child;
-            return $child;
-        }
-        foreach($child->children as $children)
-        {
-            $Store = GetRenderableByPageID($children, $PageID);
-            if($Store->pageID == $PageID) return $Store;
-        }
-    }
-    return $Store;
+	$Store = new renderable('div');
+	$Store->pageID = 'DEFAULT_ID___ELEMENT_NOT_FOUND';
+	foreach($root->children as $child)   //Get Head
+	{
+		if($child->pageID == $PageID)
+		{
+			$Store = $child;
+			return $child;
+		}
+		foreach($child->children as $children)
+		{
+			$Store = GetRenderableByPageID($children, $PageID);
+			if($Store->pageID == $PageID) return $Store;
+		}
+	}
+	return $Store;
 }
 
+/**
+ *
+ */
 function GetHeadFromDOM()
 {
   global $APPROACH_DOM_ROOT;
@@ -177,13 +193,16 @@ function GetHeadFromDOM()
   {	if($child->tag == 'head')	return $child;	}
 }
 
+/**
+ *
+ */
 function GetBodyFromDOM()
 {
   global $APPROACH_DOM_ROOT;
   global $$APPROACH_DOM_ROOT;
 
   foreach($$APPROACH_DOM_ROOT->children as $child)   //Get Body
-  {      if($child->tag == 'body')	return $child;	}
+  {	  if($child->tag == 'body')	return $child;	}
 }
 
 $ApproachDebugConsole = new renderable('div', 'ApproachDebugConsole');

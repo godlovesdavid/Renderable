@@ -7,6 +7,9 @@ require_once(__DIR__ . '/../Render.php');
 $ApproachDisplayUnit = array();
 $ApproachDisplayUnit['User']['Browser'] = new renderable('ul');
 
+/**
+ *
+ */
 class UserInterface extends renderable
 {
 	public $Layout;
@@ -29,6 +32,9 @@ class UserInterface extends renderable
 	}
 }
 
+/**
+ *
+ */
 class Wizard extends UserInterface
 {
 	public $Slides;
