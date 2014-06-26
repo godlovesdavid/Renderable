@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Title: Renderale Utility Functions for Approach
+	Title: Renderable Utility Functions for Approach
 
 
 	Copyright 2002-2014 Garet Claborn
@@ -21,16 +21,16 @@
 */
 
 
-require_once('Render.php');
+require_once('RenderXML.php');
 
-$html = new renderable('html');
+$html = new RenderXML('html');
 $html->tag='html';
 $APPROACH_DOM_ROOT = 'html';	//Create better mechanism.
 
 
 /*
 
-These functions let you primarily search through types of class renderable by
+These functions let you primarily search through types of class RenderXML by
 common CSS selectors such as ID, Class, Attribute and Tag. 
 
 Also the JavaScript Events have a require listed at the bottom of this source
@@ -41,21 +41,21 @@ locations.
 
 Use 
 
-$Collection = RenderSearch($anyRenderable,'.Buttons'); 
+$Collection = RenderSearch($anyRenderXML,'.Buttons'); 
 
 Or Directly
 
 
-$SingleTag=function GetRenderable($SearchRoot, 1908);					   //System side render ID $renderable->id;
-$SingleTag=function GetRenderableByPageID($root,'MainContent');			 //Client side page ID
+$SingleTag=function GetRenderXML($SearchRoot, 1908);					   //System side render ID $RenderXML->id;
+$SingleTag=function GetRenderXMLByPageID($root,'MainContent');			 //Client side page ID
 
-$MultiElements=function GetRenderablesByClass($root, 'Buttons');
-$MultiElements=function GetRenderablesByTag($root, 'div');
+$MultiElements=function GetRenderXMLsByClass($root, 'Buttons');
+$MultiElements=function GetRenderXMLsByTag($root, 'div');
 
 */
 
 /**
- *
+ *	Filter a 
  */
 function filter( $tag, $content, $styles, $properties)
 {
@@ -76,7 +76,10 @@ function filter( $tag, $content, $styles, $properties)
 //function _($root, $search){	return RenderSearch($root, $search); }
 
 /**
+ *	get render object by either id, page id, class, or tag.
  *
+ *	@param RenderXML $root root renderable node to search
+ *	@param Array $search [0] is selector ($, #, .) and [1] is the search text
  */
 function RenderSearch($root, $search)
 {
@@ -85,37 +88,40 @@ function RenderSearch($root, $search)
 	$renderObject;
 	switch($scope)
 	{
-		case '$': $renderObject=GetRenderable($root, $search); break;
-		case '#': $renderObject=GetRenderableByPageID($root, $search); break;
-		case '.': $renderObject=GetRenderablesByClass($root, $search); break;
-		default:  $renderObject=GetRenderableByTag($root, $search); break;
+		case '$': $renderObject=GetRenderXML($root, $search); break;
+		case '#': $renderObject=GetRenderXMLByPageID($root, $search); break;
+		case '.': $renderObject=GetRenderXMLsByClass($root, $search); break;
+		default:  $renderObject=GetRenderXMLByTag($root, $search); break;
 	}
 
 	return $renderObject;
 }
 
 /**
+ *	Get a RenderXML object by its id (not page id).
  *
+ *	@param RenderXML $root root renderable node to search
+ *	@param int $SearchID the id to search
  */
-function GetRenderable($SearchRoot, $SearchID)
+function GetRenderXML($root, $SearchID)
 {
-	if($SearchRoot->id == $SearchID) return $SearchRoot;
+	if($root->id == $SearchID) return $root;
 
-	foreach($SearchRoot->children as $renderObject)
+	foreach($root->children as $renderObject)
 	{
-			$result = GetRenderable($renderObject,$SearchID);
-			if($result instanceof renderable)
-			{
-				if($result->id == $SearchID) return $result;
-			}
+		$result = GetRenderXML($renderObject,$SearchID);
+		if($result instanceof RenderXML)
+		{
+			if($result->id == $SearchID) return $result;
+		}
 	}
 }
 
 
 /**
- *
+ *	Get a RenderXML object by tag.
  */
-function GetRenderablesByTag($root, $tag)
+function GetRenderXMLsByTag($root, $tag)
 {
 	$Store=Array();
 
@@ -127,16 +133,16 @@ function GetRenderablesByTag($root, $tag)
 		}
 		foreach($child->$children as $children)
 		{
-			$Store = array_merge($Store, GetRenderablesByTag($children, $tag));
+			$Store = array_merge($Store, GetRenderXMLsByTag($children, $tag));
 		}
 	}
 	return $Store;
 }
 
 /**
- *
+ *	Get RenderXML object by class.
  */
-function GetRenderablesByClass($root, $class)
+function GetRenderXMLsByClass($root, $class)
 {
 	$Store = array();
 
@@ -151,7 +157,7 @@ function GetRenderablesByClass($root, $class)
 		}
 		foreach($child->children as $children)
 		{
-			$Store = array_merge($Store, GetRenderablesByClass($children, $class));
+			$Store = array_merge($Store, GetRenderXMLsByClass($children, $class));
 		}
 		$child->classes=$t;
 	}
@@ -159,11 +165,11 @@ function GetRenderablesByClass($root, $class)
 }
 
 /**
- *
+ *	Get a RenderXML object by its page id.
  */
-function GetRenderableByPageID($root,$PageID)
+function GetRenderXMLByPageID($root,$PageID)
 {
-	$Store = new renderable('div');
+	$Store = new RenderXML('div');
 	$Store->pageID = 'DEFAULT_ID___ELEMENT_NOT_FOUND';
 	foreach($root->children as $child)   //Get Head
 	{
@@ -174,7 +180,7 @@ function GetRenderableByPageID($root,$PageID)
 		}
 		foreach($child->children as $children)
 		{
-			$Store = GetRenderableByPageID($children, $PageID);
+			$Store = GetRenderXMLByPageID($children, $PageID);
 			if($Store->pageID == $PageID) return $Store;
 		}
 	}
@@ -182,30 +188,34 @@ function GetRenderableByPageID($root,$PageID)
 }
 
 /**
- *
+ *	Get a RenderXML with tag name "head".
  */
 function GetHeadFromDOM()
 {
-  global $APPROACH_DOM_ROOT;
-  global $$APPROACH_DOM_ROOT;
-
-  foreach($$APPROACH_DOM_ROOT->children as $child)   //Get Head
-  {	if($child->tag == 'head')	return $child;	}
+	global $APPROACH_DOM_ROOT;
+	global $$APPROACH_DOM_ROOT;
+	
+	foreach($$APPROACH_DOM_ROOT->children as $child)   //Get Head
+	{	
+		if($child->tag == 'head')	return $child;	
+	}
 }
 
 /**
- *
+ *	Get a RenderXML with tag name "body".
  */
 function GetBodyFromDOM()
 {
-  global $APPROACH_DOM_ROOT;
-  global $$APPROACH_DOM_ROOT;
-
-  foreach($$APPROACH_DOM_ROOT->children as $child)   //Get Body
-  {	  if($child->tag == 'body')	return $child;	}
+	global $APPROACH_DOM_ROOT;
+	global $$APPROACH_DOM_ROOT;
+	
+	foreach($$APPROACH_DOM_ROOT->children as $child)   //Get Body
+	{
+		  if($child->tag == 'body')	return $child;	
+	}
 }
 
-$ApproachDebugConsole = new renderable('div', 'ApproachDebugConsole');
+$ApproachDebugConsole = new RenderXML('div', 'ApproachDebugConsole');
 $ApproachDebugMode = false;
 
 ?>

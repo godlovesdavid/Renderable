@@ -41,9 +41,9 @@ class RenderXML
 	/**
 	 *	Make a renderable object with tag label, page ID, and options (in an array).
 	 *
-	 *	@param $tag tag label of the renderable, as in <tag>
-	 *	@param $pageID html tag ID attribute.
-	 *	@param $options array of options, including template, content, whether selfcontained, and also attributes.
+	 *	@param string $tag tag label of the renderable, as in <tag>
+	 *	@param int $pageID html tag ID attribute.
+	 *	@param array $options array of options, including template, content, whether selfcontained, and also attributes.
 	 */
 	function RenderXML($t='div', $pageID='', $options=array())
 	{
@@ -101,7 +101,7 @@ class RenderXML
 		{ 
 			return ''; 
 		}
-		//for all else, affix "renderable renderable_$id" as class.
+		//for all else, affix "RenderXML RenderXML_$id" as class.
 		else
 		{
 			return ' class="'.get_class($this) .' '. get_class($this) .'_'.$this->id . '" ';
@@ -176,6 +176,38 @@ class RenderXML
 			$this->postfix;
 
 		return $OutputStream;
+	}
+	
+	
+	/**
+	 *	Render, HTML formatted.
+	 */
+	public function renderFormatted($level = 0)
+	{
+		$markup = $this->content;
+		$this->content = '';
+		
+		//make indents.
+		$indent = $childrenindent = "";
+		for ($i = 0; $i < $level; $i++)
+			$indent .= "\t";
+		$childrenindent = $indent . "\t";
+		
+		//render children.
+		$childlevel = $level+1;
+		foreach($this->children as $renderable)
+			$this->content .= PHP_EOL . $childrenindent . $renderable->renderFormatted($childlevel) . $indent;
+
+		//write attributes and class for own tag, and close it.
+		return '<' . $this->tag . //open
+			($this->pageID != null		?	' id = "' . $this->pageID .'"'	: '')	.
+			(isset($this->attributes)	?	$this->buildAttributes()	: '')	.
+			(isset($this->classes)		?	$this->buildClasses()		: '')	.
+			($this->selfContained 		?	'/>' . PHP_EOL 			: '>' .	
+			
+			$markup . $this->content . '</' . //content (skip if self-containing)
+			
+			$this->tag . '>' . PHP_EOL); //close
 	}
 }
 

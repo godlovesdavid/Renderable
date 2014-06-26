@@ -5,12 +5,12 @@ require_once(__DIR__ . '/../Render.php');
 //require_once(__DIR__ . '../../core/Service.php');
 
 $ApproachDisplayUnit = array();
-$ApproachDisplayUnit['User']['Browser'] = new renderable('ul');
+$ApproachDisplayUnit['User']['Browser'] = new RenderXML('ul');
 
 /**
  *
  */
-class UserInterface extends renderable
+class UserInterface extends RenderXML
 {
 	public $Layout;
 	public $Header; 	//in layout
@@ -20,15 +20,15 @@ class UserInterface extends renderable
 	
 	UserInterface()
 	{
-		$this->tag				= 'ul'; 
+		$this->tag					= 'ul'; 
 		$this->classes[]			= 'Interface';
-		$this->children[]			= $this->Layout 	= new renderable('li','',	array('classes'=>'Layout') );
+		$this->children[]			= $this->Layout 	= new RenderXML('li','',	array('classes'=>'Layout') );
 
-		$this->Layout->children[]	= $this->Header 	= new renderable('ul','',	array('classes'=>array('Header','controls')));
-		$this->Layout->children[]	= $this->Content	= new renderable('ul','',	array('classes'=>array('Content','controls')));
-		$this->Layout->children[]	= $this->Footer	= new renderable('ul','',	array('classes'=>array('Footer','controls')));
+		$this->Layout->children[]	= $this->Header 	= new RenderXML('ul','',	array('classes'=>array('Header','controls')));
+		$this->Layout->children[]	= $this->Content	= new RenderXML('ul','',	array('classes'=>array('Content','controls')));
+		$this->Layout->children[]	= $this->Footer		= new RenderXML('ul','',	array('classes'=>array('Footer','controls')));
 
-		$this->Header->children[]	= $this->Titlebar	= new renderable('li','',	array('classes'=>array('Titlebar'),'content'=>'Complete action by following steps.'));
+		$this->Header->children[]	= $this->Titlebar	= new RenderXML('li','',	array('classes'=>array('Titlebar'),'content'=>'Complete action by following steps.'));
 	}
 }
 
@@ -47,10 +47,10 @@ class Wizard extends UserInterface
 	{
 		$this->classes[]		= 'Wizard';
 		
-		$Footer->children[]	= $CancelButton		= new renderable('li','',	array('classes'=>array('Cancel',	'DarkRed',		'Button'),'content'=>'Cancel'));
-		$Footer->children[]	= $BackButton		= new renderable('li','',	array('classes'=>array('Back',	'DarkGreen',	'Button'),'content'=>'Back'));
-		$Footer->children[]	= $NextButton		= new renderable('li','',	array('classes'=>array('Next',		'DarkGreen',	'Button'),'content'=>'Next'));
-		$Footer->children[]	= $FinishButton		= new renderable('li','',	array('classes'=>array('Finish',	'DarkBlue',		'Button'),'content'=>'Finish'));
+		$Footer->children[]	= $CancelButton		= new RenderXML('li','',	array('classes'=>array('Cancel',	'DarkRed',		'Button'),'content'=>'Cancel'));
+		$Footer->children[]	= $BackButton		= new RenderXML('li','',	array('classes'=>array('Back',	'DarkGreen',	'Button'),'content'=>'Back'));
+		$Footer->children[]	= $NextButton		= new RenderXML('li','',	array('classes'=>array('Next',		'DarkGreen',	'Button'),'content'=>'Next'));
+		$Footer->children[]	= $FinishButton		= new RenderXML('li','',	array('classes'=>array('Finish',	'DarkBlue',		'Button'),'content'=>'Finish'));
 
 		$FinishButton->attributes['data-intent']='Autoform Insert ACTION';
 	}

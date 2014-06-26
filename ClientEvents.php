@@ -1,7 +1,6 @@
 <?php
-
 /*
-	Title: PHP-to-JavaScript Event Binding and Handling + Script Placements for Renderables
+	Title: PHP-to-JavaScript Event Binding and Handling + Script Placements for RenderXMLs
 
 
 	Copyright 2002-2014 Garet Claborn
@@ -20,13 +19,11 @@
 
 */
 
-require_once('Render.php');
+require_once('RenderXML.php');
 require_once('Utility.php');
 
-$RegisteredScripts = new renderable('script');
+$RegisteredScripts = new RenderXML('script');
 $RegisteredScripts->attributes['type']="text/javascript";
-
-
 
 /**
  *
@@ -41,7 +38,7 @@ function RegisterScript($inboundScript, $toHead=true, $comment='')
 	$HeadScripts;
 	$RegisteringScript='';
 
-	if($toHead)  //Aggregate all dynamic scripts to last script renderable in head
+	if($toHead)  //Aggregate all dynamic scripts to last script RenderXML in head
 	{
 		$Head=GetHeadFromDOM();
 		$HeadScripts = GetChildScripts($Head);
@@ -53,7 +50,7 @@ function RegisterScript($inboundScript, $toHead=true, $comment='')
 		}
 		else
 		{
-		  $RegisteringScript = new renderable('script');
+		  $RegisteringScript = new RenderXML('script');
 		  $RegisteringScript->attributes['type']="text/javascript";
 		  $Head->children[]=$RegisteringScript;
 		}
@@ -304,9 +301,7 @@ function RegisterJQueryEvent($type, $casing, $script)
 										$APPROACH_JQUERY_EVENTHANDLING);
 										break;
 		default: break;
-
 	}
-
 
 	$binding = array();
 	if( strpos($type, 'CLASS') != false)
@@ -334,8 +329,6 @@ function RegisterJQueryEvent($type, $casing, $script)
 	$APPROACH_JQUERY_EVENTS[]=$binding;
 }
 
-
-
 /**
  *
  */
@@ -356,8 +349,5 @@ function CommitJQueryEvents()
 	$ApproachEventRegistration=preg_filter('~(\{){7}(.){5,}(\}){7}~','',$ApproachEventRegistration);
 	RegisterScript($ApproachEventRegistration, true, "Event Registration From Approach");
 }
-
-
-
 
 ?>
