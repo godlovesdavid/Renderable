@@ -143,7 +143,6 @@ class RenderXML
 		//attributes is unexpectedly neither string nor array.
 		else	$attribsToString = ' data-approach-error="ATTRIBUTE_RENDER_ERROR" ';
 		
-		//re-set attributes to its proper format, and return it.
 		return $this->attributes=$attribsToString;
 	}
 
