@@ -83,25 +83,29 @@ class RenderXML
 	public function buildClasses()
 	{
 		$classesToString='';
-		//classes are in an array.
+		
+		//Class field not a string? Stringify and return it.
 		if(is_array($this->classes) && count($this->classes) >0 )
 		{
 			foreach($this->classes as $style)
 				$classesToString .= $style . ' ';
 				
-			return $this->classes=' class="'.trim($classesToString).'" ';
+			return $this->classes = ' class="' . trim($classesToString) . '" ';
 		}
-		//a one-class string.
+		
+		//class field already a string? Trim and return that.
 		elseif(is_string($this->classes) && $this->classes != '')
 		{
-			return $this->classes = ' class="'.trim($this->classes).'" ';
+			return $this->classes = ' class="' . trim($this->classes) . '" ';
 		}
-		//is a no-auto-render tag? Affix no class.
+		
+		//a no-auto-render tag? Return blank.
 		elseif(in_array($this->tag,RenderXML::$NoAutoRender))
 		{ 
 			return ''; 
 		}
-		//for all else, affix "RenderXML RenderXML_$id" as class.
+		
+		//for all else, return 'RenderXML RenderXML_$id' as class.
 		else
 		{
 			return ' class="'.get_class($this) .' '. get_class($this) .'_'.$this->id . '" ';
@@ -115,7 +119,7 @@ class RenderXML
 	{
 		$attribsToString=' ';
 		
-		//attributes is array case.
+		//attributes is array? Stringify and return it.
 		if(is_array($this->attributes) )
 		{
 			foreach($this->attributes as $att=>$val)
@@ -131,16 +135,15 @@ class RenderXML
 					return $this->attributes=$attribsToString;
 				}
 				
-				//build string normally if not array.
 				else $attribsToString .= $att . '="'.$val.'" ';
 			}
 			return $this->attributes=$attribsToString;
 		}
 		
-		//attributes is string case.
-		else if(is_string($this->attributes))	return ' '.$this->attributes.' ';	
+		//attributes already string? Return it.
+		elseif(is_string($this->attributes))	return ' '.$this->attributes.' ';	
 		
-		//attributes is unexpectedly neither string nor array.
+		//error if neither array nor string.
 		else	$attribsToString = ' data-approach-error="ATTRIBUTE_RENDER_ERROR" ';
 		
 		return $this->attributes=$attribsToString;
